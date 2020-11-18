@@ -7,11 +7,11 @@
     "eject": "rescripts eject"
   },
   "dependencies": {
-    "axios": "0.19.2",
+    "@reduxjs/toolkit": "https://pkg.csb.dev/reduxjs/redux-toolkit/commit/2c869f4d/@reduxjs/toolkit",
+    "@rtk-incubator/rtk-query": "https://pkg.csb.dev/rtk-incubator/rtk-query/commit/ad6b73b0/@rtk-incubator/rtk-query",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-query": "2.23.1",
-    "react-query-devtools": "^2.4.7",
+    "react-redux": "^7.2.2",
     "react-scripts": "3.0.1",
     "stop-runaway-react-effects": "^1.2.0",
     "styled-components": "^4.3.2"

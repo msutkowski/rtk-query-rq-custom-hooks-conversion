@@ -1,23 +1,15 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import ReactDOM from "react-dom";
-import {
-  useQueryCache,
-  QueryCache,
-  ReactQueryCacheProvider,
-} from "react-query";
-import { ReactQueryDevtools } from "react-query-devtools";
-
-import usePosts from "./hooks/usePosts";
-import usePost from "./hooks/usePost";
-
-const queryCache = new QueryCache();
+import { store } from "./store";
+import { Provider } from "react-redux";
+import { useGetPostQuery, useGetPostsQuery } from "./api";
 
 function App() {
   const [postId, setPostId] = React.useState(-1);
 
   return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
+    <Provider store={store}>
       <p>
         This example is exactly the same as the basic example, but each query
         has been refactored to be it's own custom hook. This design is the
@@ -29,41 +21,39 @@ function App() {
       ) : (
         <Posts setPostId={setPostId} />
       )}
-      <ReactQueryDevtools initialIsOpen />
-    </ReactQueryCacheProvider>
+    </Provider>
   );
 }
 
 function Posts({ setPostId }) {
-  const cache = useQueryCache();
-  const { status, data, error, isFetching } = usePosts();
+  const { data, error, isLoading, isFetching } = useGetPostsQuery();
 
   return (
     <div>
       <h1>Posts</h1>
       <div>
-        {status === "loading" ? (
+        {isLoading ? (
           "Loading..."
-        ) : status === "error" ? (
+        ) : error ? (
           <span>Error: {error.message}</span>
         ) : (
           <>
             <div>
-              {data.map((post) => (
+              {data?.map((post) => (
                 <p key={post.id}>
                   <a
                     onClick={() => setPostId(post.id)}
                     href="#"
-                    style={
-                      // We can use the queryCache here to show bold links for
-                      // ones that are cached
-                      cache.getQueryData(["post", post.id])
-                        ? {
-                            fontWeight: "bold",
-                            color: "green",
-                          }
-                        : {}
-                    }
+                    // style={
+                    //   // We can use the queryCache here to show bold links for
+                    //   // ones that are cached
+                    //   // cache.getQueryData(["post", post.id])
+                    //   //   ? {
+                    //   //       fontWeight: "bold",
+                    //   //       color: "green",
+                    //   //     }
+                    //   //   : {}
+                    // }
                   >
                     {post.title}
                   </a>
@@ -79,7 +69,7 @@ function Posts({ setPostId }) {
 }
 
 function Post({ postId, setPostId }) {
-  const { status, data, error, isFetching } = usePost(postId);
+  const { data, error, isLoading, isFetching } = useGetPostQuery(postId);
 
   return (
     <div>
@@ -88,15 +78,15 @@ function Post({ postId, setPostId }) {
           Back
         </a>
       </div>
-      {!postId || status === "loading" ? (
+      {!postId || isLoading ? (
         "Loading..."
-      ) : status === "error" ? (
+      ) : error ? (
         <span>Error: {error.message}</span>
       ) : (
         <>
-          <h1>{data.title}</h1>
+          <h1>{data?.title}</h1>
           <div>
-            <p>{data.body}</p>
+            <p>{data?.body}</p>
           </div>
           <div>{isFetching ? "Background Updating..." : " "}</div>
         </>
